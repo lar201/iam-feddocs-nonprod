@@ -1,0 +1,3178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    This file is an EXAMPLE policy file.  While the policy presented in this 
+    example file is functional, it isn't very interesting.
+    
+    Deployers should refer to the Shibboleth 2 documentation for a complete list of components 
+    and their options.
+-->
+<afp:AttributeFilterPolicyGroup id="ShibbolethFilterPolicy"
+                                xmlns:afp="urn:mace:shibboleth:2.0:afp" xmlns:basic="urn:mace:shibboleth:2.0:afp:mf:basic" 
+                                xmlns:saml="urn:mace:shibboleth:2.0:afp:mf:saml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+                                xsi:schemaLocation="urn:mace:shibboleth:2.0:afp classpath:/schema/shibboleth-2.0-afp.xsd
+                                                    urn:mace:shibboleth:2.0:afp:mf:basic classpath:/schema/shibboleth-2.0-afp-mf-basic.xsd
+                                                    urn:mace:shibboleth:2.0:afp:mf:saml classpath:/schema/shibboleth-2.0-afp-mf-saml.xsd">
+
+    <!--        <bean parent="RelyingPartyByName" c:relyingPartyIds="https://riseacweb.orad.northwestern.edu/sp">
+            <property name="profileConfigurations">
+                <list>
+                    <bean parent="SAML2.SSO.requireDuo" />
+                </list>
+            </property>
+        </bean>
+  Release the transient ID to anyone -->
+    <!-- <afp:AttributeFilterPolicy id="releaseTransientIdToAnyone">
+        <afp:PolicyRequirementRule xsi:type="basic:ANY"/>
+
+        <afp:AttributeRule attributeID="transientId">
+            <afp:PermitValueRule xsi:type="basic:ANY"/>
+        </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+    -->
+
+     <afp:AttributeFilterPolicy id="default">
+        <afp:PolicyRequirementRule xsi:type="basic:NOT">
+          <basic:Rule xsi:type="basic:AttributeRequesterRegex" regex="^(northwesternsb_sp|northwestern_prodnew_sp|nusb_sp|NA1TNB0069_sp|https://idmdevsp4.ci.northwestern.edu:8443/identityiq|https://northwestern-qa.tririga.com|https://idmspqa.ci.northwestern.edu/identityiq|urn:sp:fidelity:geninbndnbparts20:uat:xq1|https://www.joinpaladin.com/)$" />
+        </afp:PolicyRequirementRule>
+        <afp:AttributeRule attributeID="transientId">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+
+    <!-- 
+        Release eduPersonEntitlement and the permissible values of eduPersonAffiliation
+        to three specific SPs
+    -->
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:OR">
+            <basic:Rule xsi:type="basic:AttributeRequesterString" value="https://sp.testshib.org/shibboleth-sp" />
+            <basic:Rule xsi:type="basic:AttributeRequesterString" value="urn:example.org:sp>Portal" />
+            <basic:Rule xsi:type="basic:AttributeRequesterString" value="urn:example.org:sp:SIS" />
+            <basic:Rule xsi:type="basic:AttributeRequesterString" value="urn:example.org:sp:LMS" />
+        </afp:PolicyRequirementRule>
+
+        <afp:AttributeRule attributeID="eduPersonAffiliation">
+            <afp:PermitValueRule xsi:type="basic:OR">
+                <basic:Rule xsi:type="basic:AttributeValueString" value="faculty" ignoreCase="true" />
+                <basic:Rule xsi:type="basic:AttributeValueString" value="student" ignoreCase="true" />
+                <basic:Rule xsi:type="basic:AttributeValueString" value="staff" ignoreCase="true" />
+                <basic:Rule xsi:type="basic:AttributeValueString" value="alum" ignoreCase="true" />
+                <basic:Rule xsi:type="basic:AttributeValueString" value="member" ignoreCase="true" />
+                <basic:Rule xsi:type="basic:AttributeValueString" value="affiliate" ignoreCase="true" />
+                <basic:Rule xsi:type="basic:AttributeValueString" value="employee" ignoreCase="true" />
+                <basic:Rule xsi:type="basic:AttributeValueString" value="library-walk-in" ignoreCase="true" />
+            </afp:PermitValueRule>
+        </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+    <!-- 
+        Release the given name of the user to our portal service provider
+    -->
+    <!--
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="urn:example.org:sp:myPortal" />
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+    -->
+
+    <!-- Release to Unicon Test SP -->
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://iam-dev-linux.unicon.net/shibboleth" />
+
+        <afp:AttributeRule attributeID="eduPersonAffiliation">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonScopedAffiliation">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonEntitlement">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuSchoolAffiliations">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuAllSchoolAffiliations">
+            <afp:PermitValueRule xsi:type="basic:OR" >
+                <basic:Rule xsi:type="basic:AttributeValueString" value="jour" ignoreCase="true" />
+                <basic:Rule xsi:type="basic:AttributeValueString" value="student" ignoreCase="true" />
+            </afp:PermitValueRule>
+        </afp:AttributeRule>
+       <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+        <afp:AttributeRule attributeID="surname">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+        <afp:AttributeRule attributeID="gartnerUserClass">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+        <afp:AttributeRule attributeID="campusHousing">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://sp.testshib.org/shibboleth-sp" />
+
+        <afp:AttributeRule attributeID="eduPersonAffiliation">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonScopedAffiliation">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonEntitlement">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuSchoolAffiliations">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuAllSchoolAffiliations">
+            <afp:PermitValueRule xsi:type="basic:OR" >
+                <basic:Rule xsi:type="basic:AttributeValueString" value="jour" ignoreCase="true" />
+                <basic:Rule xsi:type="basic:AttributeValueString" value="student" ignoreCase="true" />
+            </afp:PermitValueRule>
+        </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://nbo.universitytickets.com/shibboleth-sp" />
+
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuCareer">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrimaryAffiliation">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuAllSchoolAffiliations">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuSnapGroups">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy id="releaseToOrbitzForBusiness">
+          <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="orbitzforbusiness"/>
+
+          <afp:AttributeRule attributeID="emailNameID">
+                 <afp:PermitValueRule xsi:type="basic:ANY"/>
+          </afp:AttributeRule>
+
+          <!-- Deny attributes below -->
+          <afp:AttributeRule attributeID="transientId">
+              <afp:DenyValueRule xsi:type="basic:ANY" />
+          </afp:AttributeRule>
+
+          <afp:AttributeRule attributeID="eduPersonPrincipalName">
+              <afp:DenyValueRule xsi:type="basic:ANY" />
+          </afp:AttributeRule>
+
+          <afp:AttributeRule attributeID="eduPersonTargetedID">
+              <afp:DenyValueRule xsi:type="basic:ANY" />
+          </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://www.internet2.edu/shibboleth" />
+
+        <afp:AttributeRule attributeID="eduPersonAffiliation">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonScopedAffiliation">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonEntitlement">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://service1.internet2.edu/test/" />
+
+        <afp:AttributeRule attributeID="eduPersonAffiliation">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonScopedAffiliation">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonEntitlement">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://shibboleth-nw.symplicity.com/sso" />
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nucurriculum">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuStudentNumber">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuAllSchoolAffiliations">
+            <afp:PermitValueRule xsi:type="basic:OR" >
+                <basic:Rule xsi:type="basic:AttributeValueString" value="jour" ignoreCase="true" />
+                <basic:Rule xsi:type="basic:AttributeValueString" value="student" ignoreCase="true" />
+            </afp:PermitValueRule>
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://shibboleth-communication-northwestern-csm.symplicity.com/sso/" />
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nucurriculum">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuStudentNumber">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+      <afp:PolicyRequirementRule xsi:type="basic:AND">
+        <basic:Rule xsi:type="basic:AttributeRequesterString" value="https://collab.cic.net/shibboleth" />
+        <basic:Rule xsi:type="basic:OR">
+            <basic:Rule xsi:type="basic:AttributeValueString" attributeID="eduPersonPrimaryAffiliation" value="faculty" />
+            <basic:Rule xsi:type="basic:AttributeValueString" attributeID="eduPersonPrimaryAffiliation" value="staff" />
+        </basic:Rule>
+      </afp:PolicyRequirementRule>
+
+      <afp:AttributeRule attributeID="givenName">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+      </afp:AttributeRule>
+      
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://northwestern.illiad.oclc.org/shibboleth" />
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://illqashib01.illiad.oclc.org/shibboleth" />
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://inutest.illiad.oclc.org/shibboleth" />
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://northwestern.ares.atlas-sys.com/shibboleth" />
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="http://www.hathitrust.org/shibboleth-sp" />
+
+        <afp:AttributeRule attributeID="eduPersonAffiliation">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonScopedAffiliation">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+     <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://sso-uat.fragomen.net" />
+        <afp:AttributeRule attributeID="employeeNumber">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+      <afp:PolicyRequirementRule xsi:type="basic:AND">
+        <basic:Rule xsi:type="basic:AttributeRequesterString" value="https://shibboleth-northwestern-horizons.symplicity.com/sso/" />
+        <basic:Rule xsi:type="basic:OR">
+            <basic:Rule xsi:type="basic:AttributeValueString" attributeID="eduPersonPrimaryAffiliation" value="faculty" />
+            <basic:Rule xsi:type="basic:AttributeValueString" attributeID="eduPersonPrimaryAffiliation" value="staff" />
+            <basic:Rule xsi:type="basic:AttributeValueString" attributeID="eduPersonPrimaryAffiliation" value="student" />
+        </basic:Rule>
+      </afp:PolicyRequirementRule>
+
+      <afp:AttributeRule attributeID="uid">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+      </afp:AttributeRule>
+      
+        <afp:AttributeRule attributeID="employeeNumber">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuStudentNumber">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>    
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://travelweb.northwestern.edu/shibboleth" />
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+	<afp:AttributeRule attributeID="nuSnapGroups">
+          <afp:PermitValueRule xsi:type="basic:AttributeValueString" value="xtratravel" />
+	</afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuAllSchoolAffiliations">
+            <afp:PermitValueRule xsi:type="basic:OR" >
+              <basic:Rule xsi:type="basic:AttributeValueString" value="faculty" ignoreCase="true" />
+              <basic:Rule xsi:type="basic:AttributeValueString" value="staff:some" ignoreCase="true" />
+              <basic:Rule xsi:type="basic:AttributeValueString" value="staff:full" ignoreCase="true" />
+            </afp:PermitValueRule>
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://corp.collegenet.com/shibboleth-sp/" />
+
+        <afp:AttributeRule attributeID="eduPersonPrimaryAffiliation">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+        <afp:AttributeRule attributeID="telephoneNumber">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+    
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://cm.maxient.com/simplesaml/module.php/saml/sp/metadata.php/maxient-sp" />
+      <afp:AttributeRule attributeID="uid">
+        <afp:PermitValueRule xsi:type="basic:ANY" />
+      </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+      <afp:PolicyRequirementRule xsi:type="basic:AND">
+        <basic:Rule xsi:type="basic:AttributeRequesterString" value="https://www.myinterfase.com/shibboleth" />
+	<basic:Rule xsi:type="basic:OR">
+	  <basic:Rule xsi:type="basic:AttributeValueString" attributeID="nuSnapGroups" value="mcconnect" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="nuAllSchoolAffiliations" value="meas:studall" />
+        </basic:Rule>
+      </afp:PolicyRequirementRule>
+      
+      <afp:AttributeRule attributeID="uid">
+        <afp:PermitValueRule xsi:type="basic:ANY" />
+      </afp:AttributeRule>
+
+      <afp:AttributeRule attributeID="nuStudentNumber">
+        <afp:PermitValueRule xsi:type="basic:ANY" />
+      </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://www.gunadiframework.com/sp" />
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuStudentNumber">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>    
+
+    <afp:AttributeFilterPolicy>
+      <afp:PolicyRequirementRule xsi:type="basic:AND">
+        <basic:Rule xsi:type="basic:AttributeRequesterString" value="https://dmp-stage.cdlib.org" />
+        <basic:Rule xsi:type="basic:OR">
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="eduPersonPrimaryAffiliation" value="faculty" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="eduPersonPrimaryAffiliation" value="staff" />
+        </basic:Rule>
+      </afp:PolicyRequirementRule>
+      
+      <afp:AttributeRule attributeID="eduPersonPrincipalName">
+        <afp:PermitValueRule xsi:type="basic:ANY" />
+      </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+      <afp:PolicyRequirementRule xsi:type="basic:AND">
+        <basic:Rule xsi:type="basic:AttributeRequesterString" value="https://dmp.cdlib.org" />
+        <basic:Rule xsi:type="basic:OR">
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="eduPersonPrimaryAffiliation" value="faculty" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="eduPersonPrimaryAffiliation" value="staff" />
+        </basic:Rule>
+      </afp:PolicyRequirementRule>
+      
+      <afp:AttributeRule attributeID="eduPersonPrincipalName">
+        <afp:PermitValueRule xsi:type="basic:ANY" />
+      </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://federation.campuslabs.com/shibboleth" />
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>    
+
+    <afp:AttributeFilterPolicy>
+      <afp:PolicyRequirementRule xsi:type="basic:AND">
+        <basic:Rule xsi:type="basic:AttributeRequesterString" value="https://www.educause.edu/shibboleth-sp" />
+        <basic:Rule xsi:type="basic:OR">
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="eduPersonPrimaryAffiliation" value="faculty" />
+            <basic:Rule xsi:type="basic:AttributeValueString" attributeID="eduPersonPrimaryAffiliation" value="staff" />
+        </basic:Rule>
+      </afp:PolicyRequirementRule>
+      
+      <afp:AttributeRule attributeID="eduPersonPrincipalName">
+        <afp:PermitValueRule xsi:type="basic:ANY" />
+      </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonAffiliation">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonScopedAffiliation">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://adeasso-dev.northwestern.edu/simplesaml/module.php/saml/sp/metadata.php/nu_passport" />
+      
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://adeasso-uat.northwestern.edu/simplesaml/module.php/saml/sp/metadata.php/nu_passport" />
+      
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://secure.aleks.com/shibboleth-sp" />
+      
+	<afp:AttributeRule attributeID="eduPersonPrincipalName">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+	</afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://shibboleth-comm-northwestern-insight.symplicity.com/sso/" />
+	<afp:AttributeRule attributeID="eduPersonPrincipalName">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+	</afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuStudentNumber">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="employeeNumber">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuAllSchoolAffiliations">
+            <afp:PermitValueRule xsi:type="basic:OR" >
+                <basic:Rule xsi:type="basic:AttributeValueString" value="soc:studall" ignoreCase="true" />
+                <basic:Rule xsi:type="basic:AttributeValueString" value="student" ignoreCase="true" />
+            </afp:PermitValueRule>
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://adeasso.northwestern.edu/simplesaml/module.php/saml/sp/metadata.php/nu_passport" />
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://mobiledev.at.northwestern.edu/simplesaml/module.php/saml/sp/metadata.php/default-sp" />
+      
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://facilities.research.northwestern.edu/simplesaml" />
+      
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://dev.facilities.research.northwestern.edu/simplesaml" />
+      
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://dev.repropedia.org/simplesaml/module.php/saml/sp/metadata.php/default-sp" />
+      
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://stage.globalresearchopportunities.northwestern.edu/simplesaml/module.php/saml/sp/metadata.php/default-sp" />
+      
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://shibboleth.gradesfirst.com/Shibboleth.sso" />
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://weinberg.co1.qualtrics.com/WRSAML/simplesaml/www/module.php/saml/sp/metadata.php/default-sp" />
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuSchoolAffiliations">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://shibboleth.coursera.org/sp" />
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://shibsp.at.northwestern.edu/shibboleth" />
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrimaryAffiliation">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://msswebtest.fsm.northwestern.edu/shibboleth/sp" />
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://testwa.fsm.northwestern.edu/shibboleth" />
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+
+    <afp:AttributeFilterPolicy id="releaseMinimalToRandS">
+  
+      <afp:PolicyRequirementRule
+	 xsi:type="saml:AttributeRequesterEntityAttributeExactMatch"
+	 attributeName="http://macedir.org/entity-category"
+	 attributeValue="http://id.incommon.org/category/research-and-scholarship"/>
+      
+      <afp:AttributeRule attributeID="eduPersonPrincipalName">
+	<afp:PermitValueRule xsi:type="saml:AttributeInMetadata" onlyIfRequired="false"/>
+      </afp:AttributeRule>
+
+      <afp:AttributeRule attributeID="mail">
+	<afp:PermitValueRule xsi:type="saml:AttributeInMetadata" onlyIfRequired="false"/>
+      </afp:AttributeRule>
+
+      <afp:AttributeRule attributeID="displayName">
+	<afp:PermitValueRule xsi:type="saml:AttributeInMetadata" onlyIfRequired="false"/>
+      </afp:AttributeRule>
+
+      <afp:AttributeRule attributeID="givenName">
+	<afp:PermitValueRule xsi:type="saml:AttributeInMetadata" onlyIfRequired="false"/>
+      </afp:AttributeRule>
+
+      <afp:AttributeRule attributeID="sn">
+	<afp:PermitValueRule xsi:type="saml:AttributeInMetadata" onlyIfRequired="false"/>
+      </afp:AttributeRule>
+
+      <afp:AttributeRule attributeID="eduPersonScopedAffiliation">
+	<afp:PermitValueRule xsi:type="saml:AttributeInMetadata" onlyIfRequired="false"/>
+      </afp:AttributeRule>
+
+      <afp:AttributeRule attributeID="uid">
+	<afp:PermitValueRule xsi:type="saml:AttributeInMetadata" onlyIfRequired="false"/>
+      </afp:AttributeRule>
+      
+      <afp:AttributeRule attributeID="eduPersonTargetedID">
+	<afp:PermitValueRule xsi:type="saml:AttributeInMetadata" onlyIfRequired="false"/>
+      </afp:AttributeRule>
+
+      <afp:AttributeRule attributeID="eduPersonEntitlement">
+	<afp:PermitValueRule xsi:type="saml:AttributeInMetadata" onlyIfRequired="false"/>
+      </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://sdauth.sciencedirect.com/" />
+        <afp:AttributeRule attributeID="employeeNumber">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonTargetedID">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://mno.northwestern.edu/shibboleth" />
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://adeasso-tst.northwestern.edu/simplesaml/module.php/saml/sp/metadata.php/nu_passport" />
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://c33-shib.symplicity.com/sso/" />
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://adeasso-tst.northwestern.edu/simplesaml/module.php/saml/sp/metadata.php/nu_passport" />
+      
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="http://www.gartner.com" />
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+	<afp:AttributeRule attributeID="gartnerUserClass">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+	</afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+   <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://federation.nih.gov/FederationGateway" />
+	<afp:AttributeRule attributeID="uid">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+	<afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="urn:oid:1.3.6.1.4.1.5923.1.1.1.6">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+   <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://soadev.nih.gov/FederationGateway" />
+        
+	<afp:AttributeRule attributeID="uid">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="urn:oid:1.3.6.1.4.1.5923.1.1.1.6">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://feinberg.qualtrics.com/WRSAML/simplesaml/www/module.php/saml/sp/metadata.php/default-sp" />
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://northwestern.desire2learn.com/Shibboleth-sp" />
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://northwestern.blackboard.com/shibboleth-sp" />
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="http://northwestern-old.instructure.com/saml2" />
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="http://northwestern.instructure.com/saml2" />
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="http://canvas.northwestern.edu/saml2" />
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+      <afp:PolicyRequirementRule xsi:type="basic:AND">
+        <basic:Rule xsi:type="basic:AttributeRequesterString" value="https://shib.courseleaf.com/shibboleth" />
+        <basic:Rule xsi:type="basic:OR">
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="eduPersonPrimaryAffiliation" value="faculty" />
+            <basic:Rule xsi:type="basic:AttributeValueString" attributeID="eduPersonPrimaryAffiliation" value="staff" />
+	    <basic:Rule xsi:type="basic:AttributeValueString" attributeID="nuSnapGroups" value="registrarcleaf" />
+        </basic:Rule>
+      </afp:PolicyRequirementRule>
+      
+      <afp:AttributeRule attributeID="eduPersonPrincipalName">
+        <afp:PermitValueRule xsi:type="basic:ANY" />
+      </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="employeeNumber">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuStudentNumber">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://trauth.doublemap.com/northwestern" />
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://trauth.doublemap.com/shibboleth" />
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://trauth-staging.doublemap.com/shibboleth" />
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://nwu-primoshib.hosted.exlibrisgroup.com/shibboleth" />
+
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuIdTag">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuAllcn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuAllDisplayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuAllGivenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+	<afp:AttributeRule attributeID="nuAllMiddleName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuAllSn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	
+        <afp:AttributeRule attributeID="nuAllLegalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+	<afp:AttributeRule attributeID="nuStudentLegalName">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuAllStudentCurrentAddress">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuAllStudentPermanentAddress">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="numailbox">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuAllSn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuAllLegalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuAllTelephoneNumber">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="postalAddress">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuAllTitle">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuAllSchoolAffiliations">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuBarCode">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://northwestern.campus.auth.edublogs.org/shibboleth" />
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+          <afp:DenyValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="cn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuAllSchoolAffiliations">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://ugadmission.northwestern.edu/" />
+        
+	<afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	
+	<afp:AttributeRule attributeID="eduPersonPrincipalName">
+          <afp:DenyValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://apply.kellogg.northwestern.edu/" />
+        
+	<afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	
+	<afp:AttributeRule attributeID="eduPersonPrincipalName">
+          <afp:DenyValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://kel.test.technolutions.net/" />
+        
+	<afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	
+	<afp:AttributeRule attributeID="eduPersonPrincipalName">
+          <afp:DenyValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://york.accessiblelearning.com/sp" />
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuStudentNumber">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>    
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://teton.accessiblelearning.com/sp" />
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuStudentNumber">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://andes.accessiblelearning.com/sp" />
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuStudentNumber">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://usertest.sciquest.com" />
+        
+	<afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	
+	<afp:AttributeRule attributeID="eduPersonPrincipalName">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>    
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://solutions.sciquest.com" />
+        
+	<afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	
+	<afp:AttributeRule attributeID="eduPersonPrincipalName">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>    
+
+<afp:AttributeFilterPolicy>
+      <afp:PolicyRequirementRule xsi:type="basic:AND">
+        <basic:Rule xsi:type="basic:AttributeRequesterString" value="https://shib.lynda.com/shibboleth-sp" />
+        <basic:Rule xsi:type="basic:OR">
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="eduPersonAffiliation" value="faculty" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="eduPersonAffiliation" value="staff" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="eduPersonAffiliation" value="student" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="eduPersonAffiliation" value="medschool" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="eduPersonAffiliation" value="member" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="eduPersonAffiliation" value="employee" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="nuAllSchoolAffiliations" value="scsOLLIAffiliate" />
+        </basic:Rule>
+      </afp:PolicyRequirementRule>
+
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+	<afp:AttributeRule attributeID="eduPersonPrimaryAffiliation">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonAffiliation">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://shib.release.lynda.com/shibboleth-sp" />
+        
+	<afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	
+	<afp:AttributeRule attributeID="eduPersonPrincipalName">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrimaryAffiliation">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonAffiliation">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>    
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://apply.qatar.northwestern.edu/" />
+        
+	<afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	
+	<afp:AttributeRule attributeID="eduPersonPrincipalName">
+          <afp:DenyValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+      <afp:PolicyRequirementRule xsi:type="basic:AND">
+        <basic:Rule xsi:type="basic:AttributeRequesterString" value="https://services.box.com/sp" />
+        <basic:Rule xsi:type="basic:OR">
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="eduPersonAffiliation" value="faculty" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="eduPersonAffiliation" value="staff" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="nuAllSchoolAffiliations" value="tgsstud" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="nuAllSchoolAffiliations" value="nubod" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="nuAllSchoolAffiliations" value="life:wp" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="nuAllSchoolAffiliations" value="nstaff:assistant" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="nuAllSchoolAffiliations" value="nstaff:wp" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="nuAllSchoolAffiliations" value="emeritus" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="nuAllSchoolAffiliations" value="student" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="nuAllSchoolAffiliations" value="matriculatedstu" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="nuSnapGroups" value="boxextra" />
+        </basic:Rule>
+      </afp:PolicyRequirementRule>
+
+      <afp:AttributeRule attributeID="mail">
+        <afp:PermitValueRule xsi:type="basic:ANY" />
+      </afp:AttributeRule>
+
+      <afp:AttributeRule attributeID="givenName">
+        <afp:PermitValueRule xsi:type="basic:ANY" />
+      </afp:AttributeRule>
+
+      <afp:AttributeRule attributeID="sn">
+        <afp:PermitValueRule xsi:type="basic:ANY" />
+      </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+
+    <afp:AttributeFilterPolicy>
+      <afp:PolicyRequirementRule xsi:type="basic:AND">
+        <basic:Rule xsi:type="basic:AttributeRequesterString" value="box.net" />
+        <basic:Rule xsi:type="basic:OR">
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="eduPersonAffiliation" value="faculty" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="eduPersonAffiliation" value="staff" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="nuAllSchoolAffiliations" value="tgsstud" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="nuAllSchoolAffiliations" value="nubod" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="nuAllSchoolAffiliations" value="life:wp" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="nuAllSchoolAffiliations" value="nstaff:assistant" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="nuAllSchoolAffiliations" value="nstaff:wp" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="nuSnapGroups" value="boxextra" />
+        </basic:Rule>
+      </afp:PolicyRequirementRule>
+
+      <afp:AttributeRule attributeID="mail">
+        <afp:PermitValueRule xsi:type="basic:ANY" />
+      </afp:AttributeRule>
+
+      <afp:AttributeRule attributeID="givenName">
+        <afp:PermitValueRule xsi:type="basic:ANY" />
+      </afp:AttributeRule>
+
+      <afp:AttributeRule attributeID="sn">
+        <afp:PermitValueRule xsi:type="basic:ANY" />
+      </afp:AttributeRule>
+
+      <afp:AttributeRule attributeID="eduPersonPrincipalName">
+        <afp:PermitValueRule xsi:type="basic:ANY" />
+      </afp:AttributeRule>
+      
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://nucommencement.universitytickets.com/shibboleth-sp" />
+        
+	<afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	
+	<afp:AttributeRule attributeID="eduPersonPrincipalName">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://activenetshibb.active.com/shibboleth" />
+        
+	<afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	
+	<afp:AttributeRule attributeID="eduPersonPrincipalName">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://apply.music.northwestern.edu/" />
+        
+	<afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	
+	<afp:AttributeRule attributeID="eduPersonPrincipalName">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://nwu.test.technolutions.net/" />
+        
+	<afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	
+	<afp:AttributeRule attributeID="eduPersonPrincipalName">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://university-dev.ccp.xcal.tv:443/openam" />
+        
+	<afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	
+	<afp:AttributeRule attributeID="eduPersonPrincipalName">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrimaryAffiliation">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+	<afp:AttributeRule attributeID="campusHousing">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+	</afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuCampusHousing">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://university-stage.ccp.xcal.tv:443/openam" />
+        
+	<afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	
+	<afp:AttributeRule attributeID="eduPersonPrincipalName">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrimaryAffiliation">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+	<afp:AttributeRule attributeID="campusHousing">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+	</afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuCampusHousing">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://university.ccp.xcal.tv:443/openam" />
+        
+	<afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	
+	<afp:AttributeRule attributeID="eduPersonPrincipalName">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrimaryAffiliation">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+	<afp:AttributeRule attributeID="campusHousing">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+	</afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuCampusHousing">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="Nwu_SBX" />
+        
+	<afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	
+	<afp:AttributeRule attributeID="eduPersonPrincipalName">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrimaryAffiliation">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+	<afp:AttributeRule attributeID="campusHousing">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+	</afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuCampusHousing">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="Nwu_STG" />
+        
+	<afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	
+	<afp:AttributeRule attributeID="eduPersonPrincipalName">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrimaryAffiliation">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+	<afp:AttributeRule attributeID="campusHousing">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+	</afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuCampusHousing">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="Nwu_PRD" />
+        
+	<afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	
+	<afp:AttributeRule attributeID="eduPersonPrincipalName">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrimaryAffiliation">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+	<afp:AttributeRule attributeID="campusHousing">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+	</afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuCampusHousing">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://xocsp.ccp.xcal.tv:8443/openam" />
+        
+	<afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	
+	<afp:AttributeRule attributeID="eduPersonPrincipalName">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrimaryAffiliation">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+	<afp:AttributeRule attributeID="campusHousing">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+	</afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuCampusHousing">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://xocsp-staging.ccp.xcal.tv:8443/openam" />
+        
+	<afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	
+	<afp:AttributeRule attributeID="eduPersonPrincipalName">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrimaryAffiliation">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+	<afp:AttributeRule attributeID="campusHousing">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+	</afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuCampusHousing">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy id="TNBTNT055">
+          <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="northwesternsb_sp"/>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+	<afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uidPersistent">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+          <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="nusb_sp"/>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+	<afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uidPersistent">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	
+    </afp:AttributeFilterPolicy>
+
+ <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://fedsp.ci.northwestern.edu/shibboleth" />
+        
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrimaryAffiliation">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuSnapGroups">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://sp.testshib.org/shibboleth-sp" />
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+          <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://www.citiprogram.org/shibboleth" />
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+	<afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://sso.smartsheet.com/saml" />
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>    
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://na02.alma.exlibrisgroup.com/mng/login" />
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://www.myinterfase.com/shibboleth" />
+
+      <afp:AttributeRule attributeID="uid">
+        <afp:PermitValueRule xsi:type="basic:ANY" />
+      </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="http://samlsp.bluejeans.com" />
+      <afp:AttributeRule attributeID="uid">
+        <afp:PermitValueRule xsi:type="basic:ANY" />
+      </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="telephoneNumber">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="title">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuNotificationEmail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="parature" />
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://northwestern-library.uprisingtech.com" />
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://northwestern-library-beta.uprisingtech.com" />
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://northwestern-library-alpha.uprisingtech.com" />
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://northwestern-adea.uprisingtech.com" />
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://northwestern-adea-beta.uprisingtech.com" />
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://northwestern-adea-alpha.uprisingtech.com" />
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://nwu-almaprimo.hosted.exlibrisgroup.com/shibboleth" />
+
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuIdTag">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://secure.wisegateit.com" />
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://www.campusgroups.com/shibboleth" />
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://slate.workplaceanswers.com/NorthWesternU/shibboleth" />
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+<afp:AttributeFilterPolicy id="">
+          <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="northwestern_prodnew_sp"/>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uidPersistent">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+      </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://weinberg-it.kanbantool.com" />
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://www.imleagues.com/shibboleth-sp" />
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy id="">
+          <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="NA1TNB0069_sp"/>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uidPersistent">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://northwesterntest.bluera.com/shibboleth/default" />
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://www.egencia.com/auth/v1" />
+
+          <afp:AttributeRule attributeID="emailNameID">
+                 <afp:PermitValueRule xsi:type="basic:ANY"/>
+          </afp:AttributeRule>
+
+          <!-- Deny attributes below -->
+          <afp:AttributeRule attributeID="transientId">
+              <afp:DenyValueRule xsi:type="basic:ANY" />
+          </afp:AttributeRule>
+
+          <afp:AttributeRule attributeID="eduPersonPrincipalName">
+              <afp:DenyValueRule xsi:type="basic:ANY" />
+          </afp:AttributeRule>
+
+          <afp:AttributeRule attributeID="eduPersonTargetedID">
+              <afp:DenyValueRule xsi:type="basic:ANY" />
+          </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://galter-2310-1.fsm.northwestern.edu/shibboleth" />
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://vtfsmghslrepo01.fsm.northwestern.edu/users/auth/shibboleth/callback" />
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="http://www.webex.com" />
+          <afp:AttributeRule attributeID="emailNameID">
+                 <afp:PermitValueRule xsi:type="basic:ANY"/>
+          </afp:AttributeRule>
+
+          <!-- Deny attributes below -->
+          <afp:AttributeRule attributeID="transientId">
+              <afp:DenyValueRule xsi:type="basic:ANY" />
+          </afp:AttributeRule>
+
+          <afp:AttributeRule attributeID="eduPersonPrincipalName">
+              <afp:DenyValueRule xsi:type="basic:ANY" />
+          </afp:AttributeRule>
+
+          <afp:AttributeRule attributeID="eduPersonTargetedID">
+              <afp:DenyValueRule xsi:type="basic:ANY" />
+          </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://nu-test.webex.com" />
+          <afp:AttributeRule attributeID="emailNameID">
+                 <afp:PermitValueRule xsi:type="basic:ANY"/>
+          </afp:AttributeRule>
+
+          <!-- Deny attributes below -->
+          <afp:AttributeRule attributeID="transientId">
+              <afp:DenyValueRule xsi:type="basic:ANY" />
+          </afp:AttributeRule>
+
+          <afp:AttributeRule attributeID="eduPersonPrincipalName">
+              <afp:DenyValueRule xsi:type="basic:ANY" />
+          </afp:AttributeRule>
+
+          <afp:AttributeRule attributeID="eduPersonTargetedID">
+              <afp:DenyValueRule xsi:type="basic:ANY" />
+          </afp:AttributeRule>
+	  
+        <afp:AttributeRule attributeID="lastname">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="firstname">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="email">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="TC1">
+          <afp:PermitValueRule xsi:type="basic:ANY"/>
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="TC2">
+          <afp:PermitValueRule xsi:type="basic:ANY"/>
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="wbx_uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://riseacweb.orad.northwestern.edu/sp" />
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+      <afp:AttributeFilterPolicy>
+     <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://staging.origamirisk.com"/>
+
+          <afp:AttributeRule attributeID="emailNameID">
+                 <afp:PermitValueRule xsi:type="basic:ANY"/>
+          </afp:AttributeRule>
+
+          <!-- Deny attributes below -->
+          <afp:AttributeRule attributeID="transientId">
+              <afp:DenyValueRule xsi:type="basic:ANY" />
+          </afp:AttributeRule>
+
+          <afp:AttributeRule attributeID="eduPersonPrincipalName">
+              <afp:DenyValueRule xsi:type="basic:ANY" />
+          </afp:AttributeRule>
+
+          <afp:AttributeRule attributeID="eduPersonTargetedID">
+              <afp:DenyValueRule xsi:type="basic:ANY" />
+          </afp:AttributeRule>
+
+   </afp:AttributeFilterPolicy>
+
+      <!--  Release the attributes to cisco CI Cloud  -->
+      <afp:AttributeFilterPolicy id="ReleaseToCI">
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString"
+				   value="https://idbroker.webex.com/ba04250b-61c7-4f0a-8eec-52ae04635db8" />
+        <afp:AttributeRule attributeID="transientId">
+          <afp:PermitValueRule xsi:type="basic:ANY"/>
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail-attr">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+      <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="http://auth.adsdev.northwestern.edu/adfs/services/trust" />
+        <afp:AttributeRule attributeID="uid">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	
+        <!-- Note: it is not recommended to send transientId to Azure AD and office 365 -->
+        <afp:AttributeRule attributeID="transientId">
+          <afp:DenyValueRule xsi:type="basic:ANY"/>
+        </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+          <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://idmdevsp4.ci.northwestern.edu:8443/identityiq"/>
+
+        <afp:AttributeRule attributeID="uidPersistent">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uid">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+          <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://idmspqa.ci.northwestern.edu/identityiq"/>
+
+        <afp:AttributeRule attributeID="uidPersistent">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uid">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	
+    </afp:AttributeFilterPolicy>
+
+
+    <afp:AttributeFilterPolicy>
+          <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://northwestern-qa.tririga.com"/>
+
+        <afp:AttributeRule attributeID="uidPersistent">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+      <afp:AttributeFilterPolicy>
+     <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="www.uat32.carezen.net"/>
+
+          <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+          </afp:AttributeRule>
+	  
+          <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+          </afp:AttributeRule>
+
+          <afp:AttributeRule attributeID="eduPersonPrimaryAffiliation">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+          </afp:AttributeRule>
+
+          <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+          </afp:AttributeRule>
+
+	  <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+          </afp:AttributeRule>
+   </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://risaopsdev.ci.northwestern.edu/sp" />
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://migratecandidate.gradleaders.com/McCormick" />
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	
+        <afp:AttributeRule attributeID="mail">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uid">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+      <afp:PolicyRequirementRule xsi:type="basic:AND">
+        <basic:Rule xsi:type="basic:AttributeRequesterString" value="box.net" />
+        <basic:Rule xsi:type="basic:OR">
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="eduPersonAffiliation" value="faculty" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="eduPersonAffiliation" value="staff" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="nuAllSchoolAffiliations" value="tgsstud" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="nuAllSchoolAffiliations" value="nubod" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="nuAllSchoolAffiliations" value="life:wp" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="nuAllSchoolAffiliations" value="nstaff:assistant" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="nuAllSchoolAffiliations" value="nstaff:wp" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="nuAllSchoolAffiliations" value="emeritus" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="nuAllSchoolAffiliations" value="student" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="nuAllSchoolAffiliations" value="matriculatedstu" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="nuSnapGroups" value="boxextra" />
+        </basic:Rule>
+      </afp:PolicyRequirementRule>
+
+      <afp:AttributeRule attributeID="mail">
+        <afp:PermitValueRule xsi:type="basic:ANY" />
+      </afp:AttributeRule>
+
+      <afp:AttributeRule attributeID="givenName">
+        <afp:PermitValueRule xsi:type="basic:ANY" />
+      </afp:AttributeRule>
+
+      <afp:AttributeRule attributeID="sn">
+        <afp:PermitValueRule xsi:type="basic:ANY" />
+      </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://candidate-beta.mbafocus.com/kungfoo" />
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	
+        <afp:AttributeRule attributeID="mail">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+      <afp:AttributeFilterPolicy id="ReleaseToCI">
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString"
+				   value="https://idbroker.webex.com/c2adf07b-dd92-48c8-abe4-80cf44572441" />
+        <afp:AttributeRule attributeID="transientId">
+          <afp:PermitValueRule xsi:type="basic:ANY"/>
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail-attr">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://migratecandidate.gradleaders.com/NWComm" />
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	
+        <afp:AttributeRule attributeID="mail">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+      <afp:AttributeFilterPolicy>
+     <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="stage2.carezen.net"/>
+
+          <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+          </afp:AttributeRule>
+	  
+          <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+          </afp:AttributeRule>
+
+          <afp:AttributeRule attributeID="eduPersonPrimaryAffiliation">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+          </afp:AttributeRule>
+
+          <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+          </afp:AttributeRule>
+
+	  <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+          </afp:AttributeRule>
+   </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://wcms.northwestern.edu/shibboleth" />
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	
+        <afp:AttributeRule attributeID="mail">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://wcmsevtest.ci.northwestern.edu/shibboleth" />
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://app.joinhandshake.com/sp" />
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	
+        <afp:AttributeRule attributeID="urn:oid:1.3.6.1.4.1.5923.1.1.1.6">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://saml.searchblox.com" />
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://northwestern-auth.securew2.com/auth/saml" />
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	
+        <afp:AttributeRule attributeID="mail">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+          <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="urn:sp:fidelity:geninbndnbparts20:uat:xq1"/>
+
+        <afp:AttributeRule attributeID="uidPersistent">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+          <!-- Deny attributes below -->
+          <afp:AttributeRule attributeID="transientId">
+              <afp:DenyValueRule xsi:type="basic:ANY" />
+          </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+          <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://splt.northwestern.edu"/>
+	  
+          <afp:AttributeRule attributeID="emailNameID">
+            <afp:PermitValueRule xsi:type="basic:ANY"/>
+          </afp:AttributeRule>
+	  
+          <!-- Deny attributes below -->
+          <afp:AttributeRule attributeID="transientId">
+              <afp:DenyValueRule xsi:type="basic:ANY" />
+          </afp:AttributeRule>
+
+          <afp:AttributeRule attributeID="eduPersonPrincipalName">
+              <afp:DenyValueRule xsi:type="basic:ANY" />
+          </afp:AttributeRule>
+
+          <afp:AttributeRule attributeID="eduPersonTargetedID">
+              <afp:DenyValueRule xsi:type="basic:ANY" />
+          </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuAllSchoolAffiliations">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nuSnapGroups">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+   <afp:AttributeFilterPolicy>
+      <afp:PolicyRequirementRule xsi:type="basic:AND">
+        <basic:Rule xsi:type="basic:OR">
+          <basic:Rule xsi:type="basic:AttributeRequesterString" value="https://borrow-btaa-org.umd.edu/sp" />
+          <basic:Rule xsi:type="basic:AttributeRequesterString" value="https://borrow-stage-btaa-org.umd.edu/sp" />
+          <basic:Rule xsi:type="basic:AttributeRequesterString" value="https://borrow-dev-btaa-org.umd.edu/sp" />
+        </basic:Rule>
+        <basic:Rule xsi:type="basic:OR">
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="eduPersonAffiliation" value="faculty" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="eduPersonAffiliation" value="staff" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="eduPersonAffiliation" value="student" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="nuAllSchoolAffiliations" value="emeritus" />
+          <basic:Rule xsi:type="basic:AttributeValueString" attributeID="nuAllSchoolAffiliations" value="student" />
+        </basic:Rule>
+      </afp:PolicyRequirementRule>
+
+      <afp:AttributeRule attributeID="eduPersonEntitlementforBTAA">
+        <afp:PermitValueRule xsi:type="basic:ANY" />
+      </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+       <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://saml.us.bitglass.net/FvBjN1vYIewsgQ==" />
+          <afp:AttributeRule attributeID="mail-attr">
+                 <afp:PermitValueRule xsi:type="basic:ANY"/>
+          </afp:AttributeRule>
+
+          <!-- Deny attributes below -->
+          <afp:AttributeRule attributeID="transientId">
+              <afp:DenyValueRule xsi:type="basic:ANY" />
+          </afp:AttributeRule>
+
+          <afp:AttributeRule attributeID="eduPersonPrincipalName">
+              <afp:DenyValueRule xsi:type="basic:ANY" />
+          </afp:AttributeRule>
+
+          <afp:AttributeRule attributeID="eduPersonTargetedID">
+              <afp:DenyValueRule xsi:type="basic:ANY" />
+          </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://shibbodev.vmock.com/vmock/shibboleth-sp" />
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="nucurriculum">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+	  <afp:AttributeRule attributeID="nucareer">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://mam.kellogg.northwestern.edu" />
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	
+        <afp:AttributeRule attributeID="mail">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="displayName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://kiskelloggdev.service-now.com" />
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	
+        <afp:AttributeRule attributeID="mail">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+   <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://auth.smoke.complion.com/saml/157c729e-9c08-4a03-98cd-a36c69194195/metadata" />
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://kiskellogg.service-now.com" />
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	
+        <afp:AttributeRule attributeID="mail">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="sn">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://vpn-connect.northwestern.edu:443/SAML20/SP" />
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="northwestern.maps.arcgis.com" />
+										    
+        <afp:AttributeRule attributeID="givenName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+       <afp:AttributeRule attributeID="mail">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://www.joinpaladin.com/" />
+	<afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="emailNameID">
+          <afp:PermitValueRule xsi:type="basic:ANY"/>
+        </afp:AttributeRule>
+	
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://admin-beta.mbafocus.com/Kellogg" />
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+	
+        <afp:AttributeRule attributeID="mail">
+          <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+      <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://northwestern-et.inspire.civitaslearning.com/SSO" />
+      <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+      </afp:AttributeRule>
+      
+      <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+      </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+    <afp:AttributeFilterPolicy>
+      <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="northwestern-inp7wwdwr6sy8ym3.apigee-saml-login" />
+      <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+      </afp:AttributeRule>
+      
+      <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+      </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+
+</afp:AttributeFilterPolicyGroup>

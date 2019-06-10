@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+                           
+       default-init-method="initialize"
+       default-destroy-method="destroy">
+
+    <!--
+    Unverified RP configuration, defaults to no support for any profiles. Add <ref> elements to the list
+    to enable specific default profile settings (as below), or create new beans inline to override defaults.
+    
+    "Unverified" typically means the IdP has no metadata, or equivalent way of assuring the identity and
+    legitimacy of a requesting system. To run an "open" IdP, you can enable profiles here.
+    -->
+    <bean id="shibboleth.UnverifiedRelyingParty" parent="RelyingParty">
+        <property name="profileConfigurations">
+            <list>
+            <!-- <bean parent="SAML2.SSO" p:encryptAssertions="false" /> -->
+            </list>
+        </property>
+    </bean>
+
+    <bean id="SAML2.SSO.requireDuo" parent="SAML2.SSO">
+       <property name="defaultAuthenticationMethods">
+           <list>
+               <bean parent="shibboleth.SAML2AuthnContextClassRef"
+                   c:classRef="http://northwestern.edu/duo" />
+           </list>
+       </property>
+    </bean>
+
+    <!--
+    Define custom SAML2 SSO that has p:encryptAssertions="false"
+    -->
+    <bean id="SAML2.SSO.noEncrypt" parent="SAML2.SSO" p:encryptAssertions="false" />
+
+    <!--
+    Default configuration, with default settings applied for all profiles, and enables
+    the attribute-release consent flow.
+    -->
+    <bean id="shibboleth.DefaultRelyingParty" parent="RelyingParty">
+        <property name="profileConfigurations">
+            <list>
+                <bean parent="Shibboleth.SSO" p:includeAttributeStatement="true" />
+                <!-- <bean parent="Shibboleth.SSO" p:includeAttributeStatement="true" /> -->
+                <ref bean="SAML1.AttributeQuery" />
+                <ref bean="SAML1.ArtifactResolution" />
+                <bean parent="SAML2.SSO" />
+                <!-- <bean parent="SAML2.SSO" /> -->
+                <ref bean="SAML2.ECP" />
+                <ref bean="SAML2.Logout" />
+                <ref bean="SAML2.AttributeQuery" />
+                <ref bean="SAML2.ArtifactResolution" />
+            </list>
+        </property>
+    </bean>
+
+    <!-- Container for any overrides you want to add. -->
+
+    <util:list id="shibboleth.RelyingPartyOverrides">
+    
+        <!--
+        Override example that identifies a single RP by name and configures it
+        for SAML 2 SSO without encryption. This is a common "vendor" scenario.
+        -->
+        <!--
+        <bean parent="RelyingPartyByName" c:relyingPartyIds="https://sp.example.org">
+            <property name="profileConfigurations">
+                <list>
+                    <bean parent="SAML2.SSO" p:encryptAssertions="false" />
+                </list>
+            </property>
+        </bean>
+        -->
+        
+        <!--
+        Override that identifies a single RP by name and configures it
+        for SAML 2 SSO without encryption. This is a common "vendor" scenario.
+	Also sets alternate entityID for IdP
+                    <bean parent="SAML2.SSO.noEncrypt" p:responderId="TP5913278" />
+        -->
+        <bean parent="RelyingPartyByName" c:relyingPartyIds="orbitzforbusiness" p:responderId="TP5913278">
+            <property name="profileConfigurations">
+                <list>
+                    <bean parent="SAML2.SSO.noEncrypt"
+			 p:nameIDFormatPrecedence="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified" />
+                </list>
+            </property>
+        </bean>
+
+        <bean parent="RelyingPartyByName" c:relyingPartyIds="https://www.egencia.com/auth/v1">
+            <property name="profileConfigurations">
+                <list>
+                    <bean parent="SAML2.SSO.requireDuo" p:encryptAssertions="false" p:nameIDFormatPrecedence="#{{'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress'}}"/>
+                </list>
+            </property>
+        </bean>
+
+        <bean parent="RelyingPartyByName" c:relyingPartyIds="http://www.webex.com">
+            <property name="profileConfigurations">
+                <list>
+                    <bean parent="SAML2.SSO.noEncrypt"
+			 p:nameIDFormatPrecedence="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress" />
+                </list>
+            </property>
+        </bean>
+
+        <bean parent="RelyingPartyByName" c:relyingPartyIds="https://nu-test.webex.com">
+            <property name="profileConfigurations">
+                <list>
+                    <bean parent="SAML2.SSO.noEncrypt" p:encryptAssertions="false" p:nameIDFormatPrecedence="#{{'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress'}}"/>
+                </list>
+            </property>
+        </bean>
+
+        <bean parent="RelyingPartyByName" c:relyingPartyIds="https://staging.origamirisk.com">
+            <property name="profileConfigurations">
+                <list>
+                    <bean parent="SAML2.SSO.noEncrypt"
+			 p:nameIDFormatPrecedence="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress" />
+                </list>
+            </property>
+        </bean>
+
+        <!--
+        Override that identifies a single RP by name and configures it
+        for SAML 2 SSO without encryption. This is a common "vendor" scenario.
+	And also specifies the NameID format to use.
+        -->
+        <bean parent="RelyingPartyByName" 
+	  c:relyingPartyIds="northwestern_prodnew_sp">
+            <property name="profileConfigurations">
+                <list>
+                    <bean parent="SAML2.SSO.noEncrypt" 
+			  p:nameIDFormatPrecedence="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" />
+                </list>
+            </property>
+        </bean>
+
+        <bean parent="RelyingPartyByName" 
+	  c:relyingPartyIds="https://idbroker.webex.com/ea7c1420-711d-4916-95f8-22de53230d1e">
+            <property name="profileConfigurations">
+                <list>
+                    <bean parent="SAML2.SSO.noEncrypt"
+			 p:nameIDFormatPrecedence="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified" />
+                </list>
+            </property>
+        </bean>
+
+        <!--
+        Override that identifies a single RP by name and
+	specifies the NameID format to use.
+        -->
+        <bean parent="RelyingPartyByName" 
+	  c:relyingPartyIds="#{{'northwesternsb_sp','nusb_sp','NA1TNB0069_sp'}}">
+            <property name="profileConfigurations">
+                <list>
+                    <bean parent="SAML2.SSO"
+			 p:nameIDFormatPrecedence="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" />
+                </list>
+            </property>
+        </bean>
+        
+        <!--
+        Override that identifies a single RP by name and configures it
+        for SAML 2 SSO without encryption. This is a common "vendor" scenario.
+	Also sets the assertion to be signed, which is not the default.
+        -->
+        <bean parent="RelyingPartyByName" c:relyingPartyIds="http://samlsp.bluejeans.com">
+            <property name="profileConfigurations">
+                <list>
+                    <bean parent="SAML2.SSO.noEncrypt" p:signAssertions="true" />
+                </list>
+            </property>
+        </bean>
+
+	<!--force Duo for fedsp -->
+	<bean parent="RelyingPartyByName" c:relyingPartyIds="https://fedsp.ci.northwestern.edu/shibboleth">
+            <property name="profileConfigurations">
+                <list>
+                    <bean parent="SAML2.SSO.requireDuo" />
+                </list>
+            </property>
+        </bean>
+
+	<!--force Duo for fedsp -->
+	<bean parent="RelyingPartyByName" c:relyingPartyIds="https://riseacweb.orad.northwestern.edu/sp">
+            <property name="profileConfigurations">
+                <list>
+                    <bean parent="SAML2.SSO.requireDuo" />
+                </list>
+            </property>
+        </bean>
+
+	<!--force Duo for fedsp -->
+	<bean parent="RelyingPartyByName" c:relyingPartyIds="https://risaopsdev.ci.northwestern.edu/sp">
+            <property name="profileConfigurations">
+                <list>
+                    <bean parent="SAML2.SSO.requireDuo" />
+                </list>
+            </property>
+        </bean>
+
+        <!--
+        Override that identifies a large list of  RPs by name and configures it
+        for SAML 2 SSO without encryption. This is a common "vendor" scenario.
+        -->
+        <bean parent="RelyingPartyByName" 
+	  c:relyingPartyIds="#{{'https://university-dev.ccp.xcal.tv:443/openam', 'https://university-stage.ccp.xcal.tv:443/openam', 'https://university.ccp.xcal.tv:443/openam', 'Nwu_STG', 'Nwu_SBX', 'Nwu_PRD', 'https://xocsp-staging.ccp.xcal.tv:8443/openam', 'https://xocsp.ccp.xcal.tv:8443/openam', 'parature'}}">
+            <property name="profileConfigurations">
+                <list>
+                    <bean parent="SAML2.SSO.noEncrypt" />
+                </list>
+            </property>
+        </bean>
+
+        <bean parent="RelyingPartyByName" c:relyingPartyIds="https://idmdevsp4.ci.northwestern.edu:8443/identityiq">
+            <property name="profileConfigurations">
+                <list>
+                    <bean parent="SAML2.SSO.noEncrypt" p:signAssertions="true" p:signResponses="false" p:encryptNameIDs="false"/>
+                </list>
+            </property>
+        </bean>
+
+        <bean parent="RelyingPartyByName" c:relyingPartyIds="https://northwestern-qa.tririga.com">
+            <property name="profileConfigurations">
+                <list>
+                    <bean parent="SAML2.SSO.noEncrypt" p:encryptAssertions="false" p:signAssertions="false" p:nameIDFormatPrecedence="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"/>
+                </list>
+            </property>
+        </bean>
+
+        <bean parent="RelyingPartyByName" c:relyingPartyIds="https://idmspqa.ci.northwestern.edu/identityiq">
+            <property name="profileConfigurations">
+                <list>
+                    <bean parent="SAML2.SSO.noEncrypt" p:signAssertions="true" p:signResponses="false" p:encryptNameIDs="false"/>
+                </list>
+            </property>
+        </bean>
+
+        <bean parent="RelyingPartyByName" 
+	  c:relyingPartyIds="https://idbroker.webex.com/c2adf07b-dd92-48c8-abe4-80cf44572441">
+            <property name="profileConfigurations">
+                <list>
+                    <bean parent="SAML2.SSO.noEncrypt" p:signAssertions="true" p:signResponses="false" p:encryptNameIDs="false" p:encryptAssertions="false"  
+			 p:nameIDFormatPrecedence="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified" />
+                </list>
+            </property>
+        </bean>
+
+        <bean parent="RelyingPartyByName" c:relyingPartyIds="box.net">
+            <property name="profileConfigurations">
+                <list>
+                    <bean parent="SAML2.SSO.noEncrypt" p:signAssertions="true" p:signResponses="true"/>
+                </list>
+            </property>
+        </bean>
+
+        <bean parent="RelyingPartyByName" 
+	  c:relyingPartyIds="https://saml.searchblox.com">
+            <property name="profileConfigurations">
+                <list>
+                    <bean parent="SAML2.SSO.noEncrypt"
+			 p:nameIDFormatPrecedence="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified" />
+                </list>
+            </property>
+        </bean>
+
+        <bean parent="RelyingPartyByName" c:relyingPartyIds="urn:sp:fidelity:geninbndnbparts20:uat:xq1">
+            <property name="profileConfigurations">
+                <list>
+                    <bean parent="SAML2.SSO.noEncrypt" p:signResponses="true" p:signAssertions="true" p:encryptNameIDs="false" p:encryptAssertions="false" p:nameIDFormatPrecedence="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"/>
+                </list>
+            </property>
+        </bean>
+
+        <bean parent="RelyingPartyByName" c:relyingPartyIds="https://splt.northwestern.edu">
+            <property name="profileConfigurations">
+                <list>
+                  <bean parent="SAML2.SSO.noEncrypt" p:signAssertions="false" p:signResponses="false" p:encryptAssertions="false" p:nameIDFormatPrecedence="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"/>
+                </list>
+            </property>
+        </bean>
+
+        <bean parent="RelyingPartyByName" c:relyingPartyIds="https://saml.us.bitglass.net/FvBjN1vYIewsgQ==">
+            <property name="profileConfigurations">
+                <list>
+                    <bean parent="SAML2.SSO.noEncrypt"
+			 p:nameIDFormatPrecedence="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress" />
+                </list>
+            </property>
+        </bean>
+
+        <bean parent="RelyingPartyByName" c:relyingPartyIds="https://mam.kellogg.northwestern.edu">
+            <property name="profileConfigurations">
+                <list>
+                    <bean parent="SAML2.SSO.noEncrypt"
+			 p:nameIDFormatPrecedence="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified" />
+                </list>
+            </property>
+        </bean>
+
+        <bean parent="RelyingPartyByName" c:relyingPartyIds="https://vpn-connect.northwestern.edu:443/SAML20/SP">
+            <property name="profileConfigurations">
+                <list>
+                    <bean parent="SAML2.SSO.requireDuo" p:encryptAssertions="false" />
+                </list>
+            </property>
+        </bean>
+
+	<bean parent="RelyingPartyByName" c:relyingPartyIds="http://northwestern-old.instructure.com/saml2">
+          <property name="profileConfigurations">
+            <list>
+              <bean parent="SAML2.SSO.requireDuo" />
+            </list>
+          </property>
+        </bean>
+
+        <bean parent="RelyingPartyByName" c:relyingPartyIds="https://www.joinpaladin.com/">
+            <property name="profileConfigurations">
+                <list>
+                    <bean parent="SAML2.SSO.noEncrypt"
+			 p:nameIDFormatPrecedence="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress" />
+                </list>
+            </property>
+        </bean>
+
+        <bean parent="RelyingPartyByName" c:relyingPartyIds="northwestern.maps.arcgis.com">
+            <property name="profileConfigurations">
+                <list>
+                    <bean parent="SAML2.SSO.noEncrypt" />
+                </list>
+            </property>
+        </bean>
+
+    </util:list>
+
+</beans>

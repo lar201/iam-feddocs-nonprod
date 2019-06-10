@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This file is an EXAMPLE metadata configuration file. -->
+<MetadataProvider id="ShibbolethMetadata" xsi:type="ChainingMetadataProvider"
+    xmlns="urn:mace:shibboleth:2.0:metadata"
+    xmlns:resource="urn:mace:shibboleth:2.0:resource"
+    xmlns:security="urn:mace:shibboleth:2.0:security"
+    xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="urn:mace:shibboleth:2.0:metadata http://shibboleth.net/schema/idp/shibboleth-metadata.xsd
+                        urn:mace:shibboleth:2.0:resource http://shibboleth.net/schema/idp/shibboleth-resource.xsd 
+                        urn:mace:shibboleth:2.0:security http://shibboleth.net/schema/idp/shibboleth-security.xsd
+                        urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd">
+                        
+    <!-- ========================================================================================== -->
+    <!--                             Metadata Configuration                                         -->
+    <!--                                                                                            -->
+    <!--  Below you place the mechanisms which define how to load the metadata for the SP you will  -->
+    <!--  provide a service to.                                                                     -->
+    <!--                                                                                            -->
+    <!--  Two examples are provided.  The Shibboleth Documentation at                               -->
+    <!--  https://wiki.shibboleth.net/confluence/display/IDP30/MetadataConfiguration                -->
+    <!--  provides more details.                                                                    --> 
+    <!--                                                                                            -->
+    <!--  NOTE.  This file SHOULD NOT contain the metadata for this IdP.                            -->
+    <!--                                                                                            -->
+    <!-- ========================================================================================== -->
+
+    <!-- Example HTTP metadata provider.  Use this if you want to download
+         the metadata from a remote service.
+         
+         You *MUST*  provider the SignatureValidationFilter in order to function securely.
+         Get the PubLic key, and validate it via some out of band mechanism, from the
+         party publishing the metadata
+         
+         The EntityRoleWhiteList saves memory by only loading metadata from entity types
+         that you will interoperate with. 
+    
+    <MetadataProvider id="HTTPMetadata"
+                      xsi:type="FileBackedHTTPMetadataProvider"
+                      backingFile="%{idp.home}/metadata/localCopyFromXYZHTTP.xml"
+                      metadataURL="http://WHATEVER"> 
+        
+        <MetadataFilter xsi:type="SignatureValidation"
+            requireSignedMetadata="false">
+            <PublicKey>
+                THIS IS AN EXAMPLE
+            
+                MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxg0TyQAP/tIvOH89EtaX
+                uRRn8SYzTj7W1TbNY4VvBmobjkRmSkki4hH9x4sQpi635wn6WtXTN/FNNmkTK3N/
+                LspmBWxfZS+n+cc7I82E5yvCAPX67QsZgqgglp2W5dvK/FsMMCS6X6SVqzBLMP88
+                NenXKxY+HMxMs0sT0UKYh1cAEqadrHRBO65aDBcm5a0sBVYt9K6pgaOHrp/zSIbh
+                nR5tFFLjBbtFktDpHL3AdGBH3OYidNGKBO3tJ3Ms7LeKXsM0+0Y4P+9fHZINL2X3
+                E2N6GVnKs5PZTg9sP0FtIpAbYm/+zCx7Yj1ET/Er8mDd6tNVGSQsn9s5xUBwGqn1
+                4wIDAQAB
+            </PublicKey>
+        </MetadataFilter>
+        <MetadataFilter xsi:type="EntityRoleWhiteList">
+            <RetainedRole>md:SPSSODescriptor</RetainedRole>
+        </MetadataFilter>
+        
+    </MetadataProvider>
+    
+    -->   
+
+    <!-- Example file metadata provider.  Use this if you want to load metadata
+         from a local file.  You might use this if you have some local SPs
+         which are not "federated" but you wish to offer a service to.
+         
+         If you do not provide a SignatureValidation filter then you *have*
+         to know that the file is valid.
+         
+
+    <MetadataProvider id="LocalMetadata"  xsi:type="FilesystemMetadataProvider" metadataFile="PATH_TO_YOUR_METADATA"/>
+
+     -->
+          
+    <!-- Get the InCommon metadata -->
+    <MetadataProvider id="URLMD_incommon"
+                      xsi:type="FileBackedHTTPMetadataProvider"
+                      backingFile="%{idp.home}/metadata/InCommon-metadata.xml"
+                      maxRefreshDelay="PT12H"
+                      metadataURL="http://md.incommon.org/InCommon/InCommon-metadata.xml">
+        <MetadataFilter xsi:type="RequiredValidUntil" maxValidityInterval="P16D"/>
+        <MetadataFilter xsi:type="SignatureValidation"
+            requireSignedMetadata="true"
+	    certificateFile="%{idp.home}/metadata/inc-md-cert.pem" />
+	
+        <MetadataFilter xsi:type="EntityRoleWhiteList">
+            <RetainedRole>md:SPSSODescriptor</RetainedRole>
+        </MetadataFilter>
+
+    </MetadataProvider>
+
+    <!-- Get the local Unicon Test SP metadata -->
+    <MetadataProvider id="UniconTestSP"  xsi:type="FilesystemMetadataProvider"
+	 metadataFile="%{idp.home}/metadata/UniconTestSP-metadata.xml"/>
+
+    <!-- Get the local Parature SP metadata -->
+    <MetadataProvider id="paratureMetadata"  xsi:type="FilesystemMetadataProvider"
+	 metadataFile="%{idp.home}/metadata/parature-metadata.xml"/>
+
+    <!-- Get the local ActiveNetwork Test SP metadata -->
+    <MetadataProvider id="activeNetworkTestMetadata"  xsi:type="FilesystemMetadataProvider"
+	 metadataFile="%{idp.home}/metadata/activenetwork-metadata.xml"/>
+
+    <!-- Get the local ActiveNetwork Prod SP metadata -->
+    <MetadataProvider id="activeNetworkProdMetadata"  xsi:type="FilesystemMetadataProvider"
+	 metadataFile="%{idp.home}/metadata/activenetwork-metadata-prod.xml"/>
+
+    <!-- Define the rest of the current Northwestern local metadata files -->
+
+    <MetadataProvider xsi:type="FilesystemMetadataProvider" 
+                         id="OrbitzForBusinessMetadata"
+                         metadataFile="%{idp.home}/metadata/orbitz-metadata.xml"/>
+
+    <MetadataProvider xsi:type="FilesystemMetadataProvider" 
+                         id="gartnerMetadata"
+                         metadataFile="%{idp.home}/metadata/gartner-metadata.xml"/>
+
+    <MetadataProvider xsi:type="FilesystemMetadataProvider" 
+                         id="d2lMetadata"
+                         metadataFile="%{idp.home}/metadata/d2l-metadata.xml"/>
+
+    <MetadataProvider xsi:type="FilesystemMetadataProvider" 
+                         id="blackboardMetadata"
+                         metadataFile="%{idp.home}/metadata/bb-metadata.xml"/>
+
+    <MetadataProvider xsi:type="FilesystemMetadataProvider" 
+                         id="kelloggslateMetadata"
+                         metadataFile="%{idp.home}/metadata/kellogg-slate-test-metadata.xml"/>
+
+    <MetadataProvider xsi:type="FilesystemMetadataProvider" 
+                         id="enrollmentslateMetadata"
+                         metadataFile="%{idp.home}/metadata/enrollment-slate-test-metadata.xml"/>
+
+    <MetadataProvider xsi:type="FilesystemMetadataProvider" 
+                         id="sabaMetadata"
+                         metadataFile="%{idp.home}/metadata/saba-sp-northwestern-metadata.xml"/>
+
+    <MetadataProvider xsi:type="FilesystemMetadataProvider" 
+                         id="comcastdevMetadata"
+                         metadataFile="%{idp.home}/metadata/comcast-dev-metadata.xml"/>
+
+    <MetadataProvider xsi:type="FilesystemMetadataProvider" 
+                         id="comcaststageMetadata"
+                         metadataFile="%{idp.home}/metadata/comcast-stage-metadata.xml"/>
+
+    <MetadataProvider xsi:type="FilesystemMetadataProvider" 
+                         id="comcastprodMetadata"
+                         metadataFile="%{idp.home}/metadata/comcast-prod-metadata.xml"/>
+
+    <MetadataProvider xsi:type="FilesystemMetadataProvider" 
+                         id="comcastfrontsbxMetadata"
+                         metadataFile="%{idp.home}/metadata/nu-comcast-frontdoor-sandbox.xml"/>
+
+    <MetadataProvider xsi:type="FilesystemMetadataProvider" 
+                         id="comcastfrontstageMetadata"
+                         metadataFile="%{idp.home}/metadata/nu-comcast-frontdoor-stage.xml"/>
+
+    <MetadataProvider xsi:type="FilesystemMetadataProvider" 
+                         id="comcastfrontprodMetadata"
+                         metadataFile="%{idp.home}/metadata/nu-comcast-frontdoor-prod.xml"/>
+
+    <MetadataProvider xsi:type="FilesystemMetadataProvider" 
+                         id="comcasttveverywhereprodMetadata"
+                         metadataFile="%{idp.home}/metadata/xocsp-metadata.xml"/>
+
+    <MetadataProvider xsi:type="FilesystemMetadataProvider" 
+                         id="comcasteverywherestageMetadata"
+                         metadataFile="%{idp.home}/metadata/xocsp-stage-metadata.xml"/>
+
+    <MetadataProvider xsi:type="FilesystemMetadataProvider" 
+                         id="lyndatestMetadata"
+                         metadataFile="%{idp.home}/metadata/lynda-test-metadata.xml"/>
+
+    <MetadataProvider xsi:type="FilesystemMetadataProvider" 
+                         id="smartsheetMetadata"
+                         metadataFile="%{idp.home}/metadata/smartsheet-saml2-sp-metadata.xml"/>
+
+    <MetadataProvider xsi:type="FilesystemMetadataProvider" 
+                         id="bluejeansMetadata"
+                         metadataFile="%{idp.home}/metadata/bluejeans-metadata.xml"/>
+
+    <MetadataProvider xsi:type="FilesystemMetadataProvider" 
+                         id="sabaUpgradeMetadata"
+                         metadataFile="%{idp.home}/metadata/northwestern_prodnew_sp.xml"/>
+
+    <MetadataProvider xsi:type="FilesystemMetadataProvider" 
+                         id="sabaTestMetadata"
+                         metadataFile="%{idp.home}/metadata/nusb_sp.xml"/>
+
+    <MetadataProvider xsi:type="FilesystemMetadataProvider" 
+                         id="sabaTest2Metadata"
+                         metadataFile="%{idp.home}/metadata/saba-sp-northwestern-metadata.xml"/>
+
+    <MetadataProvider xsi:type="FilesystemMetadataProvider" 
+                         id="sabaTest3Metadata"
+                         metadataFile="%{idp.home}/metadata/NA1TNB0069_sp.xml"/>
+
+    <MetadataProvider xsi:type="FilesystemMetadataProvider" 
+                         id="sabaQAMetadata"
+                         metadataFile="%{idp.home}/metadata/northwesternsb_sp.xml"/>
+
+    <MetadataProvider xsi:type="FilesystemMetadataProvider" 
+                         id="artshib3Metadata"
+                         metadataFile="%{idp.home}/metadata/art-global-rolodof.xml"/>
+
+    <MetadataProvider xsi:type="FilesystemMetadataProvider" 
+                         id="blueraExploreTestMetadata"
+                         metadataFile="%{idp.home}/metadata/bluera-exploretest-metadata.xml"/>
+
+    <MetadataProvider xsi:type="FilesystemMetadataProvider" 
+                         id="sciQuestTestMetadata"
+                         metadataFile="%{idp.home}/metadata/sciquest-test-metadata.xml"/>
+
+    <MetadataProvider xsi:type="FilesystemMetadataProvider" 
+                         id="egenciaMetadata"
+                         metadataFile="%{idp.home}/metadata/spring_saml_metadata.xml"/>
+
+    <MetadataProvider xsi:type="FilesystemMetadataProvider" 
+                         id="digitallibraryMetadata"
+                         metadataFile="%{idp.home}/metadata/digitallibrary-metadata.xml"/>
+
+    <MetadataProvider xsi:type="FilesystemMetadataProvider" 
+                         id="galterstagefsmMetadata"
+                         metadataFile="%{idp.home}/metadata/galterstage-fsm-metadata.xml"/>
+
+    <MetadataProvider xsi:type="FilesystemMetadataProvider" 
+                         id="webexfsmMetadata"
+                         metadataFile="%{idp.home}/metadata/webex-kellogg-test-metadata.xml"/>
+
+    <MetadataProvider xsi:type="FilesystemMetadataProvider" 
+                         id="iacucMetadata"
+                         metadataFile="%{idp.home}/metadata/iacuc-oard-dev-metadata.xml"/>
+
+    <MetadataProvider xsi:type="FilesystemMetadataProvider" 
+                         id="origamistageMetadata"
+                         metadataFile="%{idp.home}/metadata/origami-staging-metadata.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="ciscosparkMetadata"
+                         metadataFile="%{idp.home}/metadata/cisco-spark-metadata.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="o365TestMetadata"
+                         metadataFile="%{idp.home}/metadata/o365-test-rollover-metadata.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="ciscoUnifiedCallManagerMetadata"
+                         metadataFile="%{idp.home}/metadata/cisco-unified-callmanager-metadata.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="webexCanvasTestMetadata"
+                         metadataFile="%{idp.home}/metadata/webex-canvas-test-metadata.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="idmdevsp4Metadata"
+                         metadataFile="%{idp.home}/metadata/idmdevsp4-metadata.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="ibmTririgaMetadata"
+                         metadataFile="%{idp.home}/metadata/ibm-tririga-metadata.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="spQAMetadata"
+                         metadataFile="%{idp.home}/metadata/idmspqa1-metadata.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="carecomMetadata"
+                         metadataFile="%{idp.home}/metadata/carecom-dev-metadata.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="aopsDevMetadata"
+                         metadataFile="%{idp.home}/metadata/iacuc-aops-dev.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="boxTestInstanceMetadata"
+                         metadataFile="%{idp.home}/metadata/box-metadata-test.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="saleforceProdMetadata"
+                         metadataFile="%{idp.home}/metadata/mccsalesforce-prod-metadata.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="sparkTestMetadata"
+                         metadataFile="%{idp.home}/metadata/idb-spark-test-metadata.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="wcasGradLeadersMetadata"
+                         metadataFile="%{idp.home}/metadata/wcas-gradleader-metadata.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="careStageMetadata"
+                         metadataFile="%{idp.home}/metadata/carecom-stage-metadata.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="wcmsMetadata"
+                         metadataFile="%{idp.home}/metadata/wcms-metadata.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="wcmsTestMetadata"
+                         metadataFile="%{idp.home}/metadata/wcms-test-metadata.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="handShakeMetadata"
+                         metadataFile="%{idp.home}/metadata/handshake-production-new.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="UnitedWayMetadata"
+                         metadataFile="%{idp.home}/metadata/pingone-unitedway-metadata-sp.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="searchBoxMetadata"
+                         metadataFile="%{idp.home}/metadata/sbmetadata.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="securew2Metadata"
+                         metadataFile="%{idp.home}/metadata/securew2_saml_metadata.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="fidelityMetadata"
+                         metadataFile="%{idp.home}/metadata/fidelity-qa-metadata.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="splunkMetadata"
+                         metadataFile="%{idp.home}/metadata/splunk-metadata.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="qualysGuardMetadata"
+                         metadataFile="%{idp.home}/metadata/qualysguard-metadata.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="wsjMetadata"
+                         metadataFile="%{idp.home}/metadata/wsj-metadata.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="vmockMetadata"
+                         metadataFile="%{idp.home}/metadata/vmock-test-metadata.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="kelloggGradleadersTestMetadata"
+                         metadataFile="%{idp.home}/metadata/kellogg-gradleaders-test-metadata.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="bitglassMetadata"
+                         metadataFile="%{idp.home}/metadata/bitglass-metadata.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="kelloggReachEngineMetadata"
+                         metadataFile="%{idp.home}/metadata/kellogg-reachengine-metadata.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="kelloggServiceNowMetadata"
+                         metadataFile="%{idp.home}/metadata/kelloggdev-servicenow-metadata.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="kelloggServiceNowProdMetadata"
+                         metadataFile="%{idp.home}/metadata/kellogg-servicenow-prod-for-testfed3.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="gpMFAAuthMetadata"
+                         metadataFile="%{idp.home}/metadata/gp-duo-auth.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="perfectFormAuthMetadata"
+                         metadataFile="%{idp.home}/metadata/perfectform-prod-metadata.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="paladinMetadata"
+                         metadataFile="%{idp.home}/metadata/paladin-prod-metadata.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="arcgisMetadata"
+                         metadataFile="%{idp.home}/metadata/arcgis-metadata.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="qualtricsNUMetadata"
+                         metadataFile="%{idp.home}/metadata/qualtrics-northwestern-metadata.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="kelloggAdminBetaNewMetadata"
+                         metadataFile="%{idp.home}/metadata/kellogg-gradleader-admin-beta-metadata-new.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="civitasQAMetadata"
+                         metadataFile="%{idp.home}/metadata/QA_civitasinspire_northwestern_metadata.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="apigeeMetadata"
+                         metadataFile="%{idp.home}/metadata/apigee-metadata.xml"/>
+</MetadataProvider>
