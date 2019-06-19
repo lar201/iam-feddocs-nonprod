@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" ID="_dea3db991c438ca392c3f7ae8f1864d2" entityID="https://nwu-primosb.hosted.exlibrisgroup.com/primo_library/libweb/01NWU">  
+<md:SPSSODescriptor AuthnRequestsSigned="false" WantAssertionsSigned="true" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">  
+<md:KeyDescriptor>  
+<ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">  
+<ds:X509Data>  
+<ds:X509Certificate>MIIDXjCCAkagAwIBAgIGAVhhklxqMA0GCSqGSIb3DQEBCwUAMHAxGDAWBgNVBAMMD0V4bGlicmlz
+U3VwcG9ydDEOMAwGA1UECwwFUHJpbW8xEjAQBgNVBAoMCUV4IExpYnJpczESMBAGA1UEBwwJSmVy
+dXNhbGVtMQ8wDQYDVQQIDAZJc3JhZWwxCzAJBgNVBAYTAklMMB4XDTE2MTExNDA2NDIwMVoXDTMx
+MTExMTA2NDIxMVowcDEYMBYGA1UEAwwPRXhsaWJyaXNTdXBwb3J0MQ4wDAYDVQQLDAVQcmltbzES
+MBAGA1UECgwJRXggTGlicmlzMRIwEAYDVQQHDAlKZXJ1c2FsZW0xDzANBgNVBAgMBklzcmFlbDEL
+MAkGA1UEBhMCSUwwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCNOWQqApcbVfDvQ0c6
+Iug5yqyM1vIlI+9gcJAgdnhy9hhXNvqiAylMJwRKw8+5t4XvW1dBEBP8wdbVy+TKn1toGpjlgWr6
+7JRXl+AxygOKVIoXGhh0M2HuJk5DUZI+ueod8cHhlUIpuHyyTBZBfK1HZeZ8vhLarPC0WyHv2qin
+ycIheX/kfJ+kF2EAriyqhulc8gij1qX4SmAvG4XJRTmAdC8FuSLT1houeDXdzI+DlxrFyk/MK/tz
+Rv0+uMh/2dPQbQxZD/0lTjbHGon+9IE92YYEgCJocT59bpqF/CvmX95FtiQ6pDM/2wrkuOiJX3P7
++o1KSkDbbOeb59fOhpCrAgMBAAEwDQYJKoZIhvcNAQELBQADggEBAGwUnKaVs/HQnXSnKSTkS5DH
+98JQN7znK9Kgge4qN1y3Wv0Gdbft5cRHpPbt0C/bMt/omX397v2FUVaJr4WxYHS3MsREEV2Wf5oC
+M579/LAwxi1af8hz1B/sFsA5ddZ37JozsygAPWPWOQEL+QYAIxeRdoDS0vGhf2r9dGdmejlPDaUN
+8DcgfzgYUOF68Do9YaXsDXgBDClMp5ndBrxiLB0+SzgBbUxrx/HzIUkFi35rDfucvFuRSyIpMaDe
+wdGaaeH+Ny5GdFkCrG6Qnt/4UzCUlKGaxhWvOEW6n/CTkj4DR7eNkupV1GJYhTgsTPnLDAYBnn0V
+Ic1HXPZJvlv+U1Q=</ds:X509Certificate>  
+</ds:X509Data>  
+</ds:KeyInfo>  
+</md:KeyDescriptor>  
+<md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://nwu-primosb.hosted.exlibrisgroup.com/primo_library/libweb/samlLogout"/>
+<md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</md:NameIDFormat>  
+<md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://nwu-primosb.hosted.exlibrisgroup.com/primo_library/libweb/samlLogin" index="0" isDefault="true"/>
+</md:SPSSODescriptor>  
+</md:EntityDescriptor> 
