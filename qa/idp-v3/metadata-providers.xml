@@ -388,4 +388,8 @@
        <MetadataProvider xsi:type="FilesystemMetadataProvider"
                          id="apigeeMetadata"
                          metadataFile="%{idp.home}/metadata/apigee-metadata.xml"/>
+
+       <MetadataProvider xsi:type="FilesystemMetadataProvider"
+                         id="libPrimoSandBoxMetadata"
+                         metadataFile="%{idp.home}/metadata/nwu-primo-sandbox-metadata.xml"/>
 </MetadataProvider>
