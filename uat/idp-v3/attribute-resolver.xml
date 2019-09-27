@@ -977,7 +977,7 @@
 
     <resolver:DataConnector id="myLDAP" xsi:type="dc:LDAPDirectory"
         xmlns="urn:mace:shibboleth:2.0:resolver:dc"
-        ldapURL="ldaps://evldapreg11uata.ci.northwestern.edu:1636 ldaps://chldapreg11uata.ci.northwestern.edu:1636"
+        ldapURL="ldaps://evldapreg11uata:1636 ldaps://chldapreg11uata:1636"
         baseDN="dc=northwestern,dc=edu" 
         principal="cn=federation, ou=service, dc=northwestern, dc=edu"
         principalCredential="wrM5oQ=LwS3P" >
@@ -990,9 +990,8 @@
 
 	<LDAPProperty name="com.sun.jndi.ldap.connect.timeout" value="500"/>
         <dc:StartTLSTrustCredential id="LDAPtoIdPCredential" xsi:type="sec:X509ResourceBacked">
-            <sec:Certificate>%{idp.home}/credentials/ldap1c.crt</sec:Certificate>
-            <sec:Certificate>%{idp.home}/credentials/ldap2c.crt</sec:Certificate>
-            <sec:Certificate>%{idp.home}/credentials/ldap8c.crt</sec:Certificate>
+            <sec:Certificate>%{idp.home}/credentials/chldapreg11uata.pem</sec:Certificate>
+            <sec:Certificate>%{idp.home}/credentials/evldapreg11uata.pem</sec:Certificate>
         </dc:StartTLSTrustCredential>
     </resolver:DataConnector>
 
