@@ -27,6 +27,15 @@
         </property>
     </bean>
 
+    <bean id="SAML2.SSO.requireDuo" parent="SAML2.SSO">
+      <property name="defaultAuthenticationMethods">
+        <list>
+          <bean parent="shibboleth.SAML2AuthnContextClassRef"
+                c:classRef="http://northwestern.edu/duo" />
+        </list>
+      </property>
+    </bean>
+    
     <!--
     Default configuration, with default settings applied for all profiles, and enables
     the attribute-release consent flow.
@@ -63,6 +72,17 @@
             </property>
         </bean>
         -->
+	
+        <!--force Duo for fedsp -->
+        <bean parent="RelyingPartyByName"
+          c:relyingPartyIds="#{{'https://fedsp.ci.northwestern.edu/shibboleth'}}">
+          <property name="profileConfigurations">
+            <list>
+              <bean parent="SAML2.SSO.requireDuo" />
+            </list>
+          </property>
+        </bean>
+
         
     </util:list>
 
