@@ -50,7 +50,7 @@
     </afp:AttributeFilterPolicy>
     -->
 
-    <afp:AttributeFilterPolicy id="example1">
+    <afp:AttributeFilterPolicy id="exampleLR">
         <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://fedsp.ci.northwestern.edu/shibboleth" />
 
         <afp:AttributeRule attributeID="eduPersonPrincipalName">
