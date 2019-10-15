@@ -18,6 +18,7 @@
                             urn:mace:shibboleth:2.0:afp:mf:saml http://shibboleth.net/schema/idp/shibboleth-afp-mf-saml.xsd">
 
     <!-- Release some attributes to an SP. -->
+    <!--
     <afp:AttributeFilterPolicy id="example1">
         <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://sp.example.org" />
 
@@ -33,8 +34,10 @@
             <afp:PermitValueRule xsi:type="basic:ANY" />
         </afp:AttributeRule>
     </afp:AttributeFilterPolicy>
+    -->
 
     <!-- Release eduPersonAffiliation to two specific SPs. -->
+    <!--
     <afp:AttributeFilterPolicy id="example2">
         <afp:PolicyRequirementRule xsi:type="basic:OR">
             <basic:Rule xsi:type="basic:AttributeRequesterString" value="https://sp.example.org" />
@@ -42,6 +45,23 @@
         </afp:PolicyRequirementRule>
 
         <afp:AttributeRule attributeID="eduPersonScopedAffiliation">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+    -->
+
+    <afp:AttributeFilterPolicy id="example1">
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://fedsp.ci.northwestern.edu/shibboleth" />
+
+        <afp:AttributeRule attributeID="eduPersonPrincipalName">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="uid">
+            <afp:PermitValueRule xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <afp:AttributeRule attributeID="mail">
             <afp:PermitValueRule xsi:type="basic:ANY" />
         </afp:AttributeRule>
     </afp:AttributeFilterPolicy>
